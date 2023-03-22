@@ -20,8 +20,29 @@ https://brilliant.org/wiki/caesar-cipher/#:~:text=A%20Caesar%20cipher%20is%20a,a
 #include <fstream>
 using namespace std;
 
+//function declarations
 string enter_password();
 void subMenu(map<string, string> &mapObj, string username);
+string encrypt(string password, string& key);
+string encrypt(string password);
+string decrypt(string password, string key);
+string decrypt(string password);
+void change_username(map<string,string> &mapObj, string username);
+void change_password(map<string,string> &mapObj, string username);
+string enter_password();
+bool authenicate(map<string, string> mapObj, string username, string password);
+void sign_in(map<string, string> &mapObj);
+void create_account(map<string, string> &mapObj);
+void remove_account(map<string, string> mapObj);
+void mainMenu(map<string, string> &mapObj);
+void subMenu(map<string, string> &mapObj, string username);
+
+//templated function declarations
+template <class T, class U>
+void write_map(map<T, U> mapObj);
+
+template <class T, class U>
+void load_map(map<T, U> &mapObj);
 
 /*
 Function Name: Decrypt
@@ -37,13 +58,20 @@ string encrypt(string password, string& key)
     key = "";
 	for(int i = 0; i < password.length(); i++)
 	{
+	    //shift
 		int passLength = password[i] + 20;
+
+		//check if it exceeds ascii range
 		if (passLength >= 127){
 			result += char(((password[i] + 20) % 127)+32);
+
+			//Generate key T
 			key.push_back('T');
 		}
 		else{
 			result += char((password[i] + 20) % 127);
+
+			//Generate key F
 			key.push_back('F');
 		}
 	}
@@ -84,6 +112,7 @@ string decrypt(string password, string key)
 	string result = "";
 	for(int i = 0; i < password.length(); i++)
 	{
+	    //check key
 		if (key[i] == 'T')
 			result += char((password[i] - 52) + 127);
 		else{
@@ -124,6 +153,7 @@ Function Contribution: Krutivas Pradhan
 template <class T, class U>
 void write_map(map<T, U> mapObj)
 {
+    //declare variables
     ofstream outfile;
     outfile.open("encrypted.txt");
     string username;
@@ -131,14 +161,19 @@ void write_map(map<T, U> mapObj)
     string key1;
     string key2;
 
+    //declare iterator for map
     typename map<T, U>::iterator it = mapObj.begin();
 
+    //first loop case
+    //set the username and password
     username = it->first;
     password = it->second;
 
+    //encrypt username and password
     username = encrypt(username, key1);
     password = encrypt(password, key2);
 
+    //encrypt the keys
     key1 = encrypt(key1);
     key2 = encrypt(key2);
 
@@ -146,17 +181,22 @@ void write_map(map<T, U> mapObj)
 
     while (it != mapObj.end())
     {
+        //every following loop
+        //set the username and password
         username = it->first;
         password = it->second;
 
+        //encrypt username and password
         username = encrypt(username, key1);
         password = encrypt(password, key2);
 
+        //encrypt the keys
         key1 = encrypt(key1);
         key2 = encrypt(key2);
 
         ++it;
     }
+    //close the file
     outfile.close();
 }
 
@@ -171,6 +211,7 @@ Function Contribution: Krutivas Pradhan
 template <class T, class U>
 void load_map(map<T, U> &mapObj)
 {
+    //check if input file exists
     ifstream infile("encrypted.txt");
 
     if (infile.fail())
@@ -178,29 +219,28 @@ void load_map(map<T, U> &mapObj)
         return;
     }
 
-    //LOAD FROM FILE
+    //declare variables
     typename map<T, U>::iterator it = mapObj.begin();
     string username;
     string password;
     string key1;
     string key2;
 
-    int i = 0;
+    //loops until it reaches end of file
     while (!infile.eof())
     {
-        //get username and password
+        //get the encrypted username, password, and key
         getline(infile,username);
         getline(infile, key1);
         getline(infile,password);
         getline(infile, key2);
 
+        //decrypt the key
         key1 = decrypt(key1);
         key2 = decrypt(key2);
 
         //load the decrypted username and password
-        cout << decrypt(username, key1) << " " << decrypt(password, key2) << endl;
         mapObj[decrypt(username, key1)] = decrypt(password, key2);
-        ++i;
     }
     infile.close();
 }
@@ -215,15 +255,21 @@ Function Contribution: Lucas Hasting
 */
 void change_username(map<string,string> &mapObj, string username)
 {
+    //ignores cin for getline()
     cin.ignore();
 
+    //saves the password
     string password = mapObj[username];
+
+    //deletes the username element in the map
     mapObj.erase(username);
 
+    //gets input for username
     cout << "New Username: ";
     getline(cin, username);
     cout << endl;
 
+    //creates a new map element with the new username and the saved password
     mapObj[username] = password;
 }
 
@@ -237,15 +283,18 @@ Function Contribution: Lucas Hasting
 */
 void change_password(map<string,string> &mapObj, string username)
 {
+    //declare vzriables
     string Password1;
     string Password2;
 
+    //get input for the password
     cout << "Change Password: ";
     Password1 = enter_password();
 
     cout << "Retype New Password: ";
     Password2 = enter_password();
 
+    //makes sure the passwords match
     if (Password1 == Password2)
         cout << "Password Successfully changed";
     else
@@ -254,6 +303,7 @@ void change_password(map<string,string> &mapObj, string username)
         return;
     }
 
+    //changes the password for the username element
     mapObj[username] = Password1;
     return;
 }
@@ -266,27 +316,41 @@ Outgoing: password
 Return: password
 Function Contribution: Lucas Hasting
 */
-string enter_password(){
+string enter_password()
+{
+    //declare variables
     int key;
     string password = "";
+
+    //while the user does not press enter
     while(key!=13)
     {
+        //get input
         key = getch();
+
+        //if there is no password and the user presses backspace, continue
         if (password == "" && key == 8)
             continue;
 
+        //if the input is backspace
         if (key == 8)
         {
+            //delete the last key from cout
             cout << '\b';
             cout << " ";
             cout << '\b';
+
+            //remove the last key from the password
             password.pop_back();
             continue;
         }
 
+        //if the key's input was not enter
         if (key != 13)
         {
             password += char(key);
+
+            //show the mask
             cout<<"*";
         }
     }
@@ -302,7 +366,8 @@ Outgoing: None
 Return: mapObj[username] == password
 Function Contribution: Lucas Hasting
 */
-bool authenicate(map<string, string> mapObj, string username, string password){
+bool authenicate(map<string, string> mapObj, string username, string password)
+{
      return (mapObj[username] == password);
 }
 
@@ -314,21 +379,26 @@ Outgoing: map
 Return: None
 Function Contribution: Lucas Hasting
 */
-void sign_in(map<string, string> &mapObj){
+void sign_in(map<string, string> &mapObj)
+{
     string Username;
     string Password;
 
+    //ignores cin for getline()
     cin.ignore();
+
+    //gets input for username and password
     cout << "Username: ";
     getline(cin, Username);
 
     cout << "Password: ";
     Password = enter_password();
 
+    //check if that map element with that password exists
     bool auth = authenicate(mapObj, Username, Password);
-
     if (auth)
     {
+        //authentication successful
         cout << "Success" << endl;
         subMenu(mapObj, Username);
     }
@@ -344,12 +414,17 @@ Outgoing: map
 Return: None
 Function Contribution: Lucas Hasting
 */
-void create_account(map<string, string> &mapObj){
+void create_account(map<string, string> &mapObj)
+{
+    //declare variables
     string Username;
     string Password1;
     string Password2;
 
+    //ignore cin for getline()
     cin.ignore();
+
+    //get input for the username and password
     cout << "Create Username: ";
     getline(cin, Username);
 
@@ -359,6 +434,7 @@ void create_account(map<string, string> &mapObj){
     cout << "Retype Password: ";
     Password2 = enter_password();
 
+    //checks if the passwords match
     if (Password1 == Password2)
         cout << "Account Creation Succeeded";
     else
@@ -367,6 +443,7 @@ void create_account(map<string, string> &mapObj){
         return;
     }
 
+    //create a new map element of username that maps to password
     mapObj[Username] = Password1;
     return;
 
@@ -380,26 +457,31 @@ Outgoing: None
 Return: None
 Function Contribution: Lucas Hasting
 */
-void remove_account(map<string, string> mapObj){
+void remove_account(map<string, string> mapObj)
+{
+    //declare variables
     string Username;
     string Password;
 
+    //ignore cin for getline()
     cin.ignore();
 
+    //get input for username and password
     cout << "Username: ";
     getline(cin, Username);
 
     cout << "Password: ";
     Password = enter_password();
 
+    //re-authenticates user to make sure no one else is trying to delete their account
     bool auth = authenicate(mapObj, Username, Password);
-
     if (!auth)
     {
         cout << "Failed to authenticate" << endl;
         return;
     }
 
+    //removes the account from the map
     cout << "Successfully removed account" << endl;
     mapObj.erase(Username);
 }
@@ -412,10 +494,12 @@ Outgoing: map
 Return: None
 Function Contribution: Lucas Hasting
 */
-void mainMenu(map<string, string> &mapObj){
+void mainMenu(map<string, string> &mapObj)
+{
+    //declare choice variable
     int choice;
 
-
+    //loop the menu until user chooses an appropriate option
     do {
         cout << "Sign in:        1" << endl;
         cout << "Create Account: 2" << endl;
@@ -424,6 +508,7 @@ void mainMenu(map<string, string> &mapObj){
         cin >> choice;
         cout << endl;
 
+        //decides what function is called based on the user's choice
         switch(choice)
         {
             case 1:
@@ -450,12 +535,17 @@ Outgoing: map
 Return: None
 Function Contribution: Lucas Hasting
 */
-void subMenu(map<string, string> &mapObj, string username){
+void subMenu(map<string, string> &mapObj, string username)
+{
+    //declare choice variable
     int choice;
+
+    //let the user know they have signed in successfully
     cout << endl;
     cout << "You have successfully logged into someone's application" << endl;
     cout << "Here you can alter your account" << endl << endl;
 
+    //loop the menu until user chooses an appropriate option
     do{
         cout << "Change Username: 1" << endl;
         cout << "Change Password: 2" << endl;
@@ -465,6 +555,7 @@ void subMenu(map<string, string> &mapObj, string username){
         cin >> choice;
         cout << endl;
 
+        //decides what function is called based on the user's choice
         switch(choice)
         {
             case 1:
@@ -491,10 +582,15 @@ void subMenu(map<string, string> &mapObj, string username){
 int main(){
     //declare map object (2 data types)
     map<string, string> mapObj;
-    load_map(mapObj);
-    mainMenu(mapObj);
-    write_map(mapObj);
 
+    //load the map from a file
+    load_map(mapObj);
+
+    //display someone's application
+    mainMenu(mapObj);
+
+    //write the new map to a file
+    write_map(mapObj);
 
     return 0;
 }
