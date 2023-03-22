@@ -34,6 +34,7 @@ string encrypt(string password, string& key);
 string encrypt(string password);
 string decrypt(string password, string key);
 string decrypt(string password);
+void print_seperator();
 
 //templated function declarations
 template <class T, class U>
@@ -41,6 +42,9 @@ void write_map(map<T, U> mapObj);
 
 template <class T, class U>
 void load_map(map<T, U> &mapObj);
+
+//constants
+const int PRINT_AMOUNT = 70;
 
 //Drive function
 int main(){
@@ -160,7 +164,6 @@ void change_username(map<string,string> &mapObj, string username)
     //gets input for username
     cout << "New Username: ";
     getline(cin, username);
-    cout << endl;
 
     //creates a new map element with the new username and the saved password
     mapObj[username] = password;
@@ -176,7 +179,7 @@ Function Contribution: Lucas Hasting
 */
 void change_password(map<string,string> &mapObj, string username)
 {
-    //declare vzriables
+    //declare variables
     string Password1;
     string Password2;
 
@@ -189,10 +192,12 @@ void change_password(map<string,string> &mapObj, string username)
 
     //makes sure the passwords match
     if (Password1 == Password2)
-        cout << "Password Successfully changed";
+    {
+        cout << "Password Successfully changed" << endl;
+    }
     else
     {
-        cout << "Password Change Failed";
+        cout << "Password Change Failed" << endl;
         return;
     }
 
@@ -269,7 +274,7 @@ void mainMenu(map<string, string> &mapObj)
         cout << "Quit:           0" << endl;
         cout << "Enter: ";
         cin >> choice;
-        cout << endl;
+        print_seperator();
 
         //decides what function is called based on the user's choice
         switch(choice)
@@ -286,7 +291,8 @@ void mainMenu(map<string, string> &mapObj)
                 cout << "try a different option" << endl;
         }
 
-        cout << endl << endl;
+        cout << endl;
+        print_seperator();
     } while (choice >= 0 || choice <= 2);
 }
 
@@ -304,9 +310,10 @@ void subMenu(map<string, string> &mapObj, string username)
     int choice;
 
     //let the user know they have signed in successfully
-    cout << endl;
+    print_seperator();
     cout << "You have successfully logged into someone's application" << endl;
-    cout << "Here you can alter your account" << endl << endl;
+    cout << "Here you can alter your account" << endl;
+    print_seperator();
 
     //loop the menu until user chooses an appropriate option
     do{
@@ -316,7 +323,7 @@ void subMenu(map<string, string> &mapObj, string username)
         cout << "Sign out:        0" << endl;
         cout << "Enter: ";
         cin >> choice;
-        cout << endl;
+        print_seperator();
 
         //decides what function is called based on the user's choice
         switch(choice)
@@ -335,7 +342,7 @@ void subMenu(map<string, string> &mapObj, string username)
             default:
                 cout << "try a different option" << endl;
         }
-        cout << endl;
+        print_seperator();
 
     } while (choice >= 0 || choice <= 3);
 
@@ -601,4 +608,10 @@ void load_map(map<T, U> &mapObj)
         mapObj[decrypt(username, key1)] = decrypt(password, key2);
     }
     infile.close();
+}
+
+void print_seperator(){
+    for (int i = 0; i < PRINT_AMOUNT; i++)
+        cout << "-";
+    cout << endl;
 }
