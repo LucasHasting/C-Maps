@@ -25,10 +25,10 @@ void create_account(map<string, string> &mapObj);
 void remove_account(map<string, string> mapObj);
 void change_username(map<string,string> &mapObj, string username);
 void change_password(map<string,string> &mapObj, string username);
+bool authenicate(map<string, string> mapObj, string username, string password);
 void sign_in(map<string, string> &mapObj);
 void mainMenu(map<string, string> &mapObj);
 void subMenu(map<string, string> &mapObj, string username);
-bool authenicate(map<string, string> mapObj, string username, string password);
 string enter_password();
 string encrypt(string password, string& key);
 string encrypt(string password);
@@ -60,204 +60,82 @@ int main(){
 }
 
 /*
-Function Name: Decrypt
-Function Description: Takes in an non-encrypted password from user and encrypts using a Caeser Cipher.
-Incoming: password, key
-Outgoing: key
-Return: result
-Function Contribution: Ethan Nix
-*/
-string encrypt(string password, string& key)
-{
-	string result = "";
-    key = "";
-	for(int i = 0; i < password.length(); i++)
-	{
-	    //shift
-		int passLength = password[i] + 20;
-
-		//check if it exceeds ascii range
-		if (passLength >= 127){
-			result += char(((password[i] + 20) % 127)+32);
-
-			//Generate key T
-			key.push_back('T');
-		}
-		else{
-			result += char((password[i] + 20) % 127);
-
-			//Generate key F
-			key.push_back('F');
-		}
-	}
-
-	return result;
-}
-
-/*
-Function Name: encrypt
-Function Description: Overloaded encrypt function to encrypt the key
-Incoming: password
-Outgoing: None
-Return: result
-Function Contribution: Ethan Nix
-*/
-string encrypt(string password)
-{
-	string result = "";
-
-	for(int i = 0; i < password.length(); i++)
-	{
-        result += char((password[i] + 20) % 127);
-	}
-
-	return result;
-}
-
-/*
-Function Name: Decrypt
-Function Description: Takes in an encrypted password from user and decrypts using a Caeser Cipher.
-Incoming: password, key
-Outgoing: None
-Return: result
-Function Contribution: Ethan Nix
-*/
-string decrypt(string password, string key)
-{
-	string result = "";
-	for(int i = 0; i < password.length(); i++)
-	{
-	    //check key
-		if (key[i] == 'T')
-			result += char((password[i] - 52) + 127);
-		else{
-			result += char((password[i] - 20) % 127);
-			}
-	}
-
-	return result;
-}
-
-/*
-Function Name: Decrypt
-Function Description: Overloaded decrypt function to decrypt the key
-Incoming: password
-Outgoing: None
-Return: result
-Function Contribution: Ethan Nix
-*/
-string decrypt(string password)
-{
-	string result = "";
-	for(int i = 0; i < password.length(); i++)
-	{
-        result += char((password[i] - 20) % 127);
-	}
-
-	return result;
-}
-
-/*
-Function Name: write_map
-Function Description: writes the map into an encrypted text file
+Function Name: create_account
+Function Description: create's an account for a user
 Incoming: map
-Outgoing: None
+Outgoing: map
 Return: None
-Function Contribution: Krutivas Pradhan
+Function Contribution: Lucas Hasting
 */
-template <class T, class U>
-void write_map(map<T, U> mapObj)
+void create_account(map<string, string> &mapObj)
 {
     //declare variables
-    ofstream outfile;
-    outfile.open("encrypted.txt");
-    string username;
-    string password;
-    string key1;
-    string key2;
+    string Username;
+    string Password1;
+    string Password2;
 
-    //declare iterator for map
-    typename map<T, U>::iterator it = mapObj.begin();
+    //ignore cin for getline()
+    cin.ignore();
 
-    //first loop case
-    //set the username and password
-    username = it->first;
-    password = it->second;
+    //get input for the username and password
+    cout << "Create Username: ";
+    getline(cin, Username);
 
-    //encrypt username and password
-    username = encrypt(username, key1);
-    password = encrypt(password, key2);
+    cout << "Create Password: ";
+    Password1 = enter_password();
 
-    //encrypt the keys
-    key1 = encrypt(key1);
-    key2 = encrypt(key2);
+    cout << "Retype Password: ";
+    Password2 = enter_password();
 
-    ++it;
-
-    while (it != mapObj.end())
+    //checks if the passwords match
+    if (Password1 == Password2)
+        cout << "Account Creation Succeeded";
+    else
     {
-        //every following loop
-        //set the username and password
-        username = it->first;
-        password = it->second;
-
-        //encrypt username and password
-        username = encrypt(username, key1);
-        password = encrypt(password, key2);
-
-        //encrypt the keys
-        key1 = encrypt(key1);
-        key2 = encrypt(key2);
-
-        ++it;
-    }
-    //close the file
-    outfile.close();
-}
-
-/*
-Function Name: load_map
-Function Description: loads the map from an encrypted text file
-Incoming: map
-Outgoing: None
-Return: None
-Function Contribution: Krutivas Pradhan
-*/
-template <class T, class U>
-void load_map(map<T, U> &mapObj)
-{
-    //check if input file exists
-    ifstream infile("encrypted.txt");
-
-    if (infile.fail())
-    {
+        cout << "Account Creation Failed";
         return;
     }
 
+    //create a new map element of username that maps to password
+    mapObj[Username] = Password1;
+    return;
+}
+
+/*
+Function Name: remove_account
+Function Description: removes a user's account
+Incoming: map
+Outgoing: None
+Return: None
+Function Contribution: Lucas Hasting
+*/
+void remove_account(map<string, string> mapObj)
+{
     //declare variables
-    typename map<T, U>::iterator it = mapObj.begin();
-    string username;
-    string password;
-    string key1;
-    string key2;
+    string Username;
+    string Password;
 
-    //loops until it reaches end of file
-    while (!infile.eof())
+    //ignore cin for getline()
+    cin.ignore();
+
+    //get input for username and password
+    cout << "Username: ";
+    getline(cin, Username);
+
+    cout << "Password: ";
+    Password = enter_password();
+
+    //re-authenticates user to make sure no one else is trying to delete their account
+    bool auth = authenicate(mapObj, Username, Password);
+    if (!auth)
     {
-        //get the encrypted username, password, and key
-        getline(infile,username);
-        getline(infile, key1);
-        getline(infile,password);
-        getline(infile, key2);
-
-        //decrypt the key
-        key1 = decrypt(key1);
-        key2 = decrypt(key2);
-
-        //load the decrypted username and password
-        mapObj[decrypt(username, key1)] = decrypt(password, key2);
+        cout << "Failed to authenticate" << endl;
+        return;
     }
-    infile.close();
+
+    //removes the account from the map
+    cout << "Successfully removed account" << endl;
+    mapObj.erase(Username);
 }
 
 /*
@@ -324,56 +202,6 @@ void change_password(map<string,string> &mapObj, string username)
 }
 
 /*
-Function Name: enter_password
-Function Description: gets the password from the user and masks the inpuit
-Incoming: None
-Outgoing: password
-Return: password
-Function Contribution: Lucas Hasting
-*/
-string enter_password()
-{
-    //declare variables
-    int key;
-    string password = "";
-
-    //while the user does not press enter
-    while(key!=13)
-    {
-        //get input
-        key = getch();
-
-        //if there is no password and the user presses backspace, continue
-        if (password == "" && key == 8)
-            continue;
-
-        //if the input is backspace
-        if (key == 8)
-        {
-            //delete the last key from cout
-            cout << '\b';
-            cout << " ";
-            cout << '\b';
-
-            //remove the last key from the password
-            password.pop_back();
-            continue;
-        }
-
-        //if the key's input was not enter
-        if (key != 13)
-        {
-            password += char(key);
-
-            //show the mask
-            cout<<"*";
-        }
-    }
-    cout << endl;
-    return password;
-}
-
-/*
 Function Name: authenticate
 Function Description: authenticates a user trying to sign in
 Incoming: authenticate
@@ -419,86 +247,6 @@ void sign_in(map<string, string> &mapObj)
     }
     else
         cout << "Failed to sign in" << endl;
-}
-
-/*
-Function Name: create_account
-Function Description: create's an account for a user
-Incoming: map
-Outgoing: map
-Return: None
-Function Contribution: Lucas Hasting
-*/
-void create_account(map<string, string> &mapObj)
-{
-    //declare variables
-    string Username;
-    string Password1;
-    string Password2;
-
-    //ignore cin for getline()
-    cin.ignore();
-
-    //get input for the username and password
-    cout << "Create Username: ";
-    getline(cin, Username);
-
-    cout << "Create Password: ";
-    Password1 = enter_password();
-
-    cout << "Retype Password: ";
-    Password2 = enter_password();
-
-    //checks if the passwords match
-    if (Password1 == Password2)
-        cout << "Account Creation Succeeded";
-    else
-    {
-        cout << "Account Creation Failed";
-        return;
-    }
-
-    //create a new map element of username that maps to password
-    mapObj[Username] = Password1;
-    return;
-
-}
-
-/*
-Function Name: remove_account
-Function Description: removes a user's account
-Incoming: map
-Outgoing: None
-Return: None
-Function Contribution: Lucas Hasting
-*/
-void remove_account(map<string, string> mapObj)
-{
-    //declare variables
-    string Username;
-    string Password;
-
-    //ignore cin for getline()
-    cin.ignore();
-
-    //get input for username and password
-    cout << "Username: ";
-    getline(cin, Username);
-
-    cout << "Password: ";
-    Password = enter_password();
-
-    //re-authenticates user to make sure no one else is trying to delete their account
-    bool auth = authenicate(mapObj, Username, Password);
-    if (!auth)
-    {
-        cout << "Failed to authenticate" << endl;
-        return;
-    }
-
-    //removes the account from the map
-    cout << "Successfully removed account" << endl;
-    mapObj.erase(Username);
 }
 
 /*
@@ -591,4 +339,266 @@ void subMenu(map<string, string> &mapObj, string username)
 
     } while (choice >= 0 || choice <= 3);
 
+}
+
+/*
+Function Name: enter_password
+Function Description: gets the password from the user and masks the inpuit
+Incoming: None
+Outgoing: password
+Return: password
+Function Contribution: Lucas Hasting
+*/
+string enter_password()
+{
+    //declare variables
+    int key;
+    string password = "";
+
+    //while the user does not press enter
+    while(key!=13)
+    {
+        //get input
+        key = getch();
+
+        //if there is no password and the user presses backspace, continue
+        if (password == "" && key == 8)
+            continue;
+
+        //if the input is backspace
+        if (key == 8)
+        {
+            //delete the last key from cout
+            cout << '\b';
+            cout << " ";
+            cout << '\b';
+
+            //remove the last key from the password
+            password.pop_back();
+            continue;
+        }
+
+        //if the key's input was not enter
+        if (key != 13)
+        {
+            password += char(key);
+
+            //show the mask
+            cout<<"*";
+        }
+    }
+    cout << endl;
+    return password;
+}
+
+/*
+Function Name: encrypt
+Function Description: Takes in an non-encrypted password from user and encrypts using a Caeser Cipher.
+Incoming: password, key
+Outgoing: key
+Return: result
+Function Contribution: Ethan Nix
+*/
+string encrypt(string password, string& key)
+{
+	string result = "";
+    key = "";
+	for(int i = 0; i < password.length(); i++)
+	{
+	    //shift
+		int passLength = password[i] + 20;
+
+		//check if it exceeds ascii range
+		if (passLength >= 127){
+			result += char(((password[i] + 20) % 127)+32);
+
+			//Generate key T
+			key.push_back('T');
+		}
+		else{
+			result += char((password[i] + 20) % 127);
+
+			//Generate key F
+			key.push_back('F');
+		}
+	}
+
+	return result;
+}
+
+/*
+Function Name: encrypt
+Function Description: Overloaded encrypt function to encrypt the key
+Incoming: password
+Outgoing: None
+Return: result
+Function Contribution: Ethan Nix
+*/
+string encrypt(string password)
+{
+	string result = "";
+
+	for(int i = 0; i < password.length(); i++)
+	{
+        result += char((password[i] + 20) % 127);
+	}
+
+	return result;
+}
+
+/*
+Function Name: decrypt
+Function Description: Takes in an encrypted password from user and decrypts using a Caeser Cipher.
+Incoming: password, key
+Outgoing: None
+Return: result
+Function Contribution: Ethan Nix
+*/
+string decrypt(string password, string key)
+{
+	string result = "";
+	for(int i = 0; i < password.length(); i++)
+	{
+	    //check key
+		if (key[i] == 'T')
+			result += char((password[i] - 52) + 127);
+		else{
+			result += char((password[i] - 20) % 127);
+			}
+	}
+
+	return result;
+}
+
+/*
+Function Name: decrypt
+Function Description: Overloaded decrypt function to decrypt the key
+Incoming: password
+Outgoing: None
+Return: result
+Function Contribution: Ethan Nix
+*/
+string decrypt(string password)
+{
+	string result = "";
+	for(int i = 0; i < password.length(); i++)
+	{
+        result += char((password[i] - 20) % 127);
+	}
+
+	return result;
+}
+
+/*
+Function Name: write_map
+Function Description: writes the map into an encrypted text file
+Incoming: map
+Outgoing: None
+Return: None
+Function Contribution: Krutivas Pradhan
+*/
+template <class T, class U>
+void write_map(map<T, U> mapObj)
+{
+    //declare variables
+    ofstream outfile;
+    string username;
+    string password;
+    string key1;
+    string key2;
+
+    //checks if the map is empty
+    if(mapObj.empty())
+        return;
+
+    //declare file stream
+    outfile.open("encrypted.txt");
+
+
+    //declare iterator for map
+    typename map<T, U>::iterator it = mapObj.begin();
+
+    //first loop case
+    //set the username and password
+    username = it->first;
+    password = it->second;
+
+    //encrypt username and password
+    username = encrypt(username, key1);
+    password = encrypt(password, key2);
+
+    //encrypt the keys
+    key1 = encrypt(key1);
+    key2 = encrypt(key2);
+
+    //write the data to a file
+    outfile << username << endl << key1 << endl << password << endl << key2;
+
+    ++it;
+
+    while (it != mapObj.end())
+    {
+        //every following loop
+        //set the username and password
+        username = it->first;
+        password = it->second;
+
+        //encrypt username and password
+        username = encrypt(username, key1);
+        password = encrypt(password, key2);
+
+        //encrypt the keys
+        key1 = encrypt(key1);
+        key2 = encrypt(key2);
+
+        //write the data to a file
+        outfile << endl << username << endl << key1 << endl << password << endl << key2;
+
+        ++it;
+    }
+    //close the file
+    outfile.close();
+}
+
+/*
+Function Name: load_map
+Function Description: loads the map from an encrypted text file
+Incoming: map
+Outgoing: None
+Return: None
+Function Contribution: Krutivas Pradhan
+*/
+template <class T, class U>
+void load_map(map<T, U> &mapObj)
+{
+    //check if input file exists
+    ifstream infile("encrypted.txt");
+
+    if (infile.fail())
+        return;
+
+    //declare variables
+    typename map<T, U>::iterator it = mapObj.begin();
+    string username;
+    string password;
+    string key1;
+    string key2;
+
+    //loops until it reaches end of file
+    while (!infile.eof())
+    {
+        //get the encrypted username, password, and key
+        getline(infile,username);
+        getline(infile, key1);
+        getline(infile,password);
+        getline(infile, key2);
+
+        //decrypt the key
+        key1 = decrypt(key1);
+        key2 = decrypt(key2);
+
+        //load the decrypted username and password
+        mapObj[decrypt(username, key1)] = decrypt(password, key2);
+    }
+    infile.close();
 }
