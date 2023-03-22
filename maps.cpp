@@ -18,38 +18,47 @@ https://brilliant.org/wiki/caesar-cipher/#:~:text=A%20Caesar%20cipher%20is%20a,a
 #include <map>
 #include <conio.h>
 #include <fstream>
-#include <vector>
 using namespace std;
 
 string enter_password();
 void subMenu(map<string, string> &mapObj, string username);
 
-//Function Name: Encrypt
-//Function Description: Takes in a password from user and enrypts using
-//						a Caeser Cipher.
-//Incoming Parameters: string password, string con
-//Outgoing Parameters: string con
-//Return Value: result
-string encrypt(string password, string& con)
+/*
+Function Name: Decrypt
+Function Description: Takes in an non-encrypted password from user and encrypts using a Caeser Cipher.
+Incoming: password, key
+Outgoing: key
+Return: result
+Function Contribution: Ethan Nix
+*/
+string encrypt(string password, string& key)
 {
 	string result = "";
-    con = "";
+    key = "";
 	for(int i = 0; i < password.length(); i++)
 	{
 		int passLength = password[i] + 20;
 		if (passLength >= 127){
 			result += char(((password[i] + 20) % 127)+32);
-			con.push_back('T');
+			key.push_back('T');
 		}
 		else{
 			result += char((password[i] + 20) % 127);
-			con.push_back('F');
+			key.push_back('F');
 		}
 	}
 
 	return result;
 }
 
+/*
+Function Name: encrypt
+Function Description: Overloaded encrypt function to encrypt the key
+Incoming: password
+Outgoing: None
+Return: result
+Function Contribution: Ethan Nix
+*/
 string encrypt(string password)
 {
 	string result = "";
@@ -62,18 +71,20 @@ string encrypt(string password)
 	return result;
 }
 
-//Function Name: Decrypt
-//Function Description: Takes in an encrypted password from user and decrypts using
-//						a Caeser Cipher.
-//Incoming Parameters: string password, string con
-//Outgoing Parameters: None
-//Return Value: result
-string decrypt(string password, string con)
+/*
+Function Name: Decrypt
+Function Description: Takes in an encrypted password from user and decrypts using a Caeser Cipher.
+Incoming: password, key
+Outgoing: None
+Return: result
+Function Contribution: Ethan Nix
+*/
+string decrypt(string password, string key)
 {
 	string result = "";
 	for(int i = 0; i < password.length(); i++)
 	{
-		if (con[i] == 'T')
+		if (key[i] == 'T')
 			result += char((password[i] - 52) + 127);
 		else{
 			result += char((password[i] - 20) % 127);
@@ -83,6 +94,14 @@ string decrypt(string password, string con)
 	return result;
 }
 
+/*
+Function Name: Decrypt
+Function Description: Overloaded decrypt function to decrypt the key
+Incoming: password
+Outgoing: None
+Return: result
+Function Contribution: Ethan Nix
+*/
 string decrypt(string password)
 {
 	string result = "";
@@ -94,12 +113,19 @@ string decrypt(string password)
 	return result;
 }
 
-// SAVE
+/*
+Function Name: write_map
+Function Description: writes the map into an encrypted text file
+Incoming: map
+Outgoing: None
+Return: None
+Function Contribution: Krutivas Pradhan
+*/
 template <class T, class U>
 void write_map(map<T, U> mapObj)
 {
     ofstream outfile;
-    outfile.open("output.txt");
+    outfile.open("encrypted.txt");
     string username;
     string password;
     string key1;
@@ -116,7 +142,6 @@ void write_map(map<T, U> mapObj)
     key1 = encrypt(key1);
     key2 = encrypt(key2);
 
-    outfile << username << endl << key1 << endl << password << endl << key2;
     ++it;
 
     while (it != mapObj.end())
@@ -130,17 +155,23 @@ void write_map(map<T, U> mapObj)
         key1 = encrypt(key1);
         key2 = encrypt(key2);
 
-        outfile << endl << username << endl << key1 << endl << password << endl << key2;
         ++it;
     }
     outfile.close();
 }
 
-// LOAD
+/*
+Function Name: load_map
+Function Description: loads the map from an encrypted text file
+Incoming: map
+Outgoing: None
+Return: None
+Function Contribution: Krutivas Pradhan
+*/
 template <class T, class U>
 void load_map(map<T, U> &mapObj)
 {
-    ifstream infile("output.txt");
+    ifstream infile("encrypted.txt");
 
     if (infile.fail())
     {
@@ -175,11 +206,11 @@ void load_map(map<T, U> &mapObj)
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: change_username
+Function Description: changes a user's name in someone's application
+Incoming: map, username
+Outgoing: map
+Return: None
 Function Contribution: Lucas Hasting
 */
 void change_username(map<string,string> &mapObj, string username)
@@ -197,11 +228,11 @@ void change_username(map<string,string> &mapObj, string username)
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: change_password
+Function Description: changes a user's password in someone's application
+Incoming: map, username
+Outgoing: map
+Return: None
 Function Contribution: Lucas Hasting
 */
 void change_password(map<string,string> &mapObj, string username)
@@ -228,11 +259,11 @@ void change_password(map<string,string> &mapObj, string username)
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: enter_password
+Function Description: gets the password from the user and masks the inpuit
+Incoming: None
+Outgoing: password
+Return: password
 Function Contribution: Lucas Hasting
 */
 string enter_password(){
@@ -264,23 +295,23 @@ string enter_password(){
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: authenticate
+Function Description: authenticates a user trying to sign in
+Incoming: authenticate
+Outgoing: None
+Return: mapObj[username] == password
 Function Contribution: Lucas Hasting
 */
-bool Authenicate(map<string, string> mapObj, string username, string password){
+bool authenicate(map<string, string> mapObj, string username, string password){
      return (mapObj[username] == password);
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: sign_in
+Function Description: decides if the user can gain access to someone's application
+Incoming: map
+Outgoing: map
+Return: None
 Function Contribution: Lucas Hasting
 */
 void sign_in(map<string, string> &mapObj){
@@ -294,7 +325,7 @@ void sign_in(map<string, string> &mapObj){
     cout << "Password: ";
     Password = enter_password();
 
-    bool auth = Authenicate(mapObj, Username, Password);
+    bool auth = authenicate(mapObj, Username, Password);
 
     if (auth)
     {
@@ -306,11 +337,11 @@ void sign_in(map<string, string> &mapObj){
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: create_account
+Function Description: create's an account for a user
+Incoming: map
+Outgoing: map
+Return: None
 Function Contribution: Lucas Hasting
 */
 void create_account(map<string, string> &mapObj){
@@ -342,11 +373,11 @@ void create_account(map<string, string> &mapObj){
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: remove_account
+Function Description: removes a user's account
+Incoming: map
+Outgoing: None
+Return: None
 Function Contribution: Lucas Hasting
 */
 void remove_account(map<string, string> mapObj){
@@ -359,9 +390,9 @@ void remove_account(map<string, string> mapObj){
     getline(cin, Username);
 
     cout << "Password: ";
-    getline(cin, Password);
+    Password = enter_password();
 
-    bool auth = Authenicate(mapObj, Username, Password);
+    bool auth = authenicate(mapObj, Username, Password);
 
     if (!auth)
     {
@@ -374,11 +405,11 @@ void remove_account(map<string, string> mapObj){
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: mainMenu
+Function Description: displays the main menu and chooses according options
+Incoming: map
+Outgoing: map
+Return: None
 Function Contribution: Lucas Hasting
 */
 void mainMenu(map<string, string> &mapObj){
@@ -412,11 +443,11 @@ void mainMenu(map<string, string> &mapObj){
 }
 
 /*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
+Function Name: subMenu
+Function Description: displays the sub menu and chooses according options
+Incoming: map, username
+Outgoing: map
+Return: None
 Function Contribution: Lucas Hasting
 */
 void subMenu(map<string, string> &mapObj, string username){
@@ -456,14 +487,7 @@ void subMenu(map<string, string> &mapObj, string username){
 
 }
 
-/*
-Function Name:
-Function Description:
-Incoming:
-Outgoing:
-Return:
-Function Contribution: Lucas Hasting
-*/
+//Drive function
 int main(){
     //declare map object (2 data types)
     map<string, string> mapObj;
