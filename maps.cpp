@@ -21,21 +21,19 @@ https://brilliant.org/wiki/caesar-cipher/#:~:text=A%20Caesar%20cipher%20is%20a,a
 using namespace std;
 
 //function declarations
-string enter_password();
+void create_account(map<string, string> &mapObj);
+void remove_account(map<string, string> mapObj);
+void change_username(map<string,string> &mapObj, string username);
+void change_password(map<string,string> &mapObj, string username);
+void sign_in(map<string, string> &mapObj);
+void mainMenu(map<string, string> &mapObj);
 void subMenu(map<string, string> &mapObj, string username);
+bool authenicate(map<string, string> mapObj, string username, string password);
+string enter_password();
 string encrypt(string password, string& key);
 string encrypt(string password);
 string decrypt(string password, string key);
 string decrypt(string password);
-void change_username(map<string,string> &mapObj, string username);
-void change_password(map<string,string> &mapObj, string username);
-string enter_password();
-bool authenicate(map<string, string> mapObj, string username, string password);
-void sign_in(map<string, string> &mapObj);
-void create_account(map<string, string> &mapObj);
-void remove_account(map<string, string> mapObj);
-void mainMenu(map<string, string> &mapObj);
-void subMenu(map<string, string> &mapObj, string username);
 
 //templated function declarations
 template <class T, class U>
@@ -43,6 +41,23 @@ void write_map(map<T, U> mapObj);
 
 template <class T, class U>
 void load_map(map<T, U> &mapObj);
+
+//Drive function
+int main(){
+    //declare map object (2 data types)
+    map<string, string> mapObj;
+
+    //load the map from a file
+    load_map(mapObj);
+
+    //display someone's application
+    mainMenu(mapObj);
+
+    //write the new map to a file
+    write_map(mapObj);
+
+    return 0;
+}
 
 /*
 Function Name: Decrypt
@@ -576,21 +591,4 @@ void subMenu(map<string, string> &mapObj, string username)
 
     } while (choice >= 0 || choice <= 3);
 
-}
-
-//Drive function
-int main(){
-    //declare map object (2 data types)
-    map<string, string> mapObj;
-
-    //load the map from a file
-    load_map(mapObj);
-
-    //display someone's application
-    mainMenu(mapObj);
-
-    //write the new map to a file
-    write_map(mapObj);
-
-    return 0;
 }
