@@ -1,13 +1,11 @@
 /*
-begin() – Returns an iterator to the first element in the map.
-end() – Returns an iterator to the theoretical element that follows the last element in the map.
-size() – Returns the number of elements in the map.
-max_size() – Returns the maximum number of elements that the map can hold.
-empty() – Returns whether the map is empty.
-pair insert(keyvalue, mapvalue) – Adds a new element to the map.
-erase(iterator position) – Removes the element at the position pointed by the iterator.
-erase(const g)– Removes the key-value ‘g’ from the map.
-clear() – Removes all the elements from the map.
+Names: Lucas Hasting, Ethan Nix, Krutivas Pradhan
+Course: CS 355
+Assignment: Assignment 8
+Date: 2/23/2023
+Program Description: Create an account management system for some application
+File Name: maps.cpp
+File Contribution: Lucas Hasting, Ethan Nix, Krutivas Pradhan
 
 refrences: https://www.vbforums.com/showthread.php?168659-Password-Mask-with-cin
 https://stackoverflow.com/questions/3745861/how-to-remove-last-character-put-to-stdcout
@@ -16,15 +14,174 @@ https://www.geeksforgeeks.org/map-associative-containers-the-c-standard-template
 https://brilliant.org/wiki/caesar-cipher/#:~:text=A%20Caesar%20cipher%20is%20a,an%20A%2C%20and%20so%20on.
 */
 
-
 #include <iostream>
 #include <map>
 #include <conio.h>
+#include <fstream>
+#include <vector>
 using namespace std;
 
 string enter_password();
-void menu2(map<string, string> &mapObj, string username);
+void subMenu(map<string, string> &mapObj, string username);
 
+//Function Name: Encrypt
+//Function Description: Takes in a password from user and enrypts using
+//						a Caeser Cipher.
+//Incoming Parameters: string password, string con
+//Outgoing Parameters: string con
+//Return Value: result
+string encrypt(string password, string& con)
+{
+	string result = "";
+    con = "";
+	for(int i = 0; i < password.length(); i++)
+	{
+		int passLength = password[i] + 20;
+		if (passLength >= 127){
+			result += char(((password[i] + 20) % 127)+32);
+			con.push_back('T');
+		}
+		else{
+			result += char((password[i] + 20) % 127);
+			con.push_back('F');
+		}
+	}
+
+	return result;
+}
+
+string encrypt(string password)
+{
+	string result = "";
+
+	for(int i = 0; i < password.length(); i++)
+	{
+        result += char((password[i] + 20) % 127);
+	}
+
+	return result;
+}
+
+//Function Name: Decrypt
+//Function Description: Takes in an encrypted password from user and decrypts using
+//						a Caeser Cipher.
+//Incoming Parameters: string password, string con
+//Outgoing Parameters: None
+//Return Value: result
+string decrypt(string password, string con)
+{
+	string result = "";
+	for(int i = 0; i < password.length(); i++)
+	{
+		if (con[i] == 'T')
+			result += char((password[i] - 52) + 127);
+		else{
+			result += char((password[i] - 20) % 127);
+			}
+	}
+
+	return result;
+}
+
+string decrypt(string password)
+{
+	string result = "";
+	for(int i = 0; i < password.length(); i++)
+	{
+        result += char((password[i] - 20) % 127);
+	}
+
+	return result;
+}
+
+// SAVE
+template <class T, class U>
+void write_map(map<T, U> mapObj)
+{
+    ofstream outfile;
+    outfile.open("output.txt");
+    string username;
+    string password;
+    string key1;
+    string key2;
+
+    typename map<T, U>::iterator it = mapObj.begin();
+
+    username = it->first;
+    password = it->second;
+
+    username = encrypt(username, key1);
+    password = encrypt(password, key2);
+
+    key1 = encrypt(key1);
+    key2 = encrypt(key2);
+
+    outfile << username << endl << key1 << endl << password << endl << key2;
+    ++it;
+
+    while (it != mapObj.end())
+    {
+        username = it->first;
+        password = it->second;
+
+        username = encrypt(username, key1);
+        password = encrypt(password, key2);
+
+        key1 = encrypt(key1);
+        key2 = encrypt(key2);
+
+        outfile << endl << username << endl << key1 << endl << password << endl << key2;
+        ++it;
+    }
+    outfile.close();
+}
+
+// LOAD
+template <class T, class U>
+void load_map(map<T, U> &mapObj)
+{
+    ifstream infile("output.txt");
+
+    if (infile.fail())
+    {
+        return;
+    }
+
+    //LOAD FROM FILE
+    typename map<T, U>::iterator it = mapObj.begin();
+    string username;
+    string password;
+    string key1;
+    string key2;
+
+    int i = 0;
+    while (!infile.eof())
+    {
+        //get username and password
+        getline(infile,username);
+        getline(infile, key1);
+        getline(infile,password);
+        getline(infile, key2);
+
+        key1 = decrypt(key1);
+        key2 = decrypt(key2);
+
+        //load the decrypted username and password
+        cout << decrypt(username, key1) << " " << decrypt(password, key2) << endl;
+        mapObj[decrypt(username, key1)] = decrypt(password, key2);
+        ++i;
+    }
+    infile.close();
+}
+
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
 void change_username(map<string,string> &mapObj, string username)
 {
     cin.ignore();
@@ -39,6 +196,14 @@ void change_username(map<string,string> &mapObj, string username)
     mapObj[username] = password;
 }
 
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
 void change_password(map<string,string> &mapObj, string username)
 {
     string Password1;
@@ -62,6 +227,14 @@ void change_password(map<string,string> &mapObj, string username)
     return;
 }
 
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
 string enter_password(){
     int key;
     string password = "";
@@ -90,10 +263,26 @@ string enter_password(){
     return password;
 }
 
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
 bool Authenicate(map<string, string> mapObj, string username, string password){
      return (mapObj[username] == password);
 }
 
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
 void sign_in(map<string, string> &mapObj){
     string Username;
     string Password;
@@ -110,12 +299,20 @@ void sign_in(map<string, string> &mapObj){
     if (auth)
     {
         cout << "Success" << endl;
-        menu2(mapObj, Username);
+        subMenu(mapObj, Username);
     }
     else
         cout << "Failed to sign in" << endl;
 }
 
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
 void create_account(map<string, string> &mapObj){
     string Username;
     string Password1;
@@ -144,6 +341,14 @@ void create_account(map<string, string> &mapObj){
 
 }
 
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
 void remove_account(map<string, string> mapObj){
     string Username;
     string Password;
@@ -168,8 +373,17 @@ void remove_account(map<string, string> mapObj){
     mapObj.erase(Username);
 }
 
-void menu(map<string, string> &mapObj){
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
+void mainMenu(map<string, string> &mapObj){
     int choice;
+
 
     do {
         cout << "Sign in:        1" << endl;
@@ -197,7 +411,15 @@ void menu(map<string, string> &mapObj){
     } while (choice >= 0 || choice <= 2);
 }
 
-void menu2(map<string, string> &mapObj, string username){
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
+void subMenu(map<string, string> &mapObj, string username){
     int choice;
     cout << endl;
     cout << "You have successfully logged into someone's application" << endl;
@@ -234,10 +456,21 @@ void menu2(map<string, string> &mapObj, string username){
 
 }
 
+/*
+Function Name:
+Function Description:
+Incoming:
+Outgoing:
+Return:
+Function Contribution: Lucas Hasting
+*/
 int main(){
     //declare map object (2 data types)
     map<string, string> mapObj;
-    menu(mapObj);
+    load_map(mapObj);
+    mainMenu(mapObj);
+    write_map(mapObj);
+
 
     return 0;
 }
