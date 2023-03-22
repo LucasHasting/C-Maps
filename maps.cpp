@@ -22,7 +22,7 @@ using namespace std;
 
 //function declarations
 void create_account(map<string, string> &mapObj);
-void remove_account(map<string, string> mapObj);
+void remove_account(map<string, string> &mapObj, string current_user);
 void change_username(map<string,string> &mapObj, string username);
 void change_password(map<string,string> &mapObj, string username);
 bool authenicate(map<string, string> mapObj, string username, string password);
@@ -55,6 +55,7 @@ int main(){
     load_map(mapObj);
 
     //display someone's application
+    print_seperator();
     mainMenu(mapObj);
 
     //write the new map to a file
@@ -113,7 +114,7 @@ Outgoing: None
 Return: None
 Function Contribution: Lucas Hasting
 */
-void remove_account(map<string, string> mapObj)
+void remove_account(map<string, string> &mapObj, string current_user)
 {
     //declare variables
     string Username;
@@ -122,24 +123,21 @@ void remove_account(map<string, string> mapObj)
     //ignore cin for getline()
     cin.ignore();
 
-    //get input for username and password
-    cout << "Username: ";
-    getline(cin, Username);
-
+    //get input for password
     cout << "Password: ";
     Password = enter_password();
 
     //re-authenticates user to make sure no one else is trying to delete their account
-    bool auth = authenicate(mapObj, Username, Password);
+    bool auth = authenicate(mapObj, current_user, Password);
     if (!auth)
     {
-        cout << "Failed to authenticate" << endl;
+        cout << "Failed to authenticate";
         return;
     }
 
     //removes the account from the map
-    cout << "Successfully removed account" << endl;
-    mapObj.erase(Username);
+    cout << "Successfully removed account";
+    mapObj.erase(current_user);
 }
 
 /*
@@ -251,7 +249,7 @@ void sign_in(map<string, string> &mapObj)
         subMenu(mapObj, Username);
     }
     else
-        cout << "Failed to sign in" << endl;
+        cout << "Failed to sign in";
 }
 
 /*
@@ -335,8 +333,8 @@ void subMenu(map<string, string> &mapObj, string username)
                 change_password(mapObj, username);
                 break;
             case 3:
-                remove_account(mapObj);
-                break;
+                remove_account(mapObj, username);
+                return;
             case 0:
                 return;
             default:
@@ -514,13 +512,15 @@ void write_map(map<T, U> mapObj)
     string key1;
     string key2;
 
-    //checks if the map is empty
-    if(mapObj.empty())
-        return;
-
-    //declare file stream
     outfile.open("encrypted.txt");
 
+    //checks if the map is empty, if so, delete the output file
+    if(mapObj.empty())
+    {
+        outfile.close();
+        remove("encrypted.txt");
+        return;
+    }
 
     //declare iterator for map
     typename map<T, U>::iterator it = mapObj.begin();
