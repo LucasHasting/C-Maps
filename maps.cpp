@@ -18,51 +18,8 @@ https://brilliant.org/wiki/caesar-cipher/#:~:text=A%20Caesar%20cipher%20is%20a,a
 #include <map>
 #include <conio.h>
 #include <fstream>
+#include "maps.h"
 using namespace std;
-
-//function declarations
-void create_account(map<string, string> &mapObj);
-void remove_account(map<string, string> &mapObj, string current_user);
-void change_username(map<string,string> &mapObj, string username);
-void change_password(map<string,string> &mapObj, string username);
-bool authenicate(map<string, string> mapObj, string username, string password);
-void sign_in(map<string, string> &mapObj);
-void mainMenu(map<string, string> &mapObj);
-void subMenu(map<string, string> &mapObj, string username);
-string enter_password();
-string encrypt(string password, string& key);
-string encrypt(string password);
-string decrypt(string password, string key);
-string decrypt(string password);
-void print_seperator();
-
-//templated function declarations
-template <class T, class U>
-void write_map(map<T, U> mapObj);
-
-template <class T, class U>
-void load_map(map<T, U> &mapObj);
-
-//constants
-const int PRINT_AMOUNT = 70;
-
-//Drive function
-int main(){
-    //declare map object (2 data types)
-    map<string, string> mapObj;
-
-    //load the map from a file
-    load_map(mapObj);
-
-    //display someone's application
-    print_seperator();
-    mainMenu(mapObj);
-
-    //write the new map to a file
-    write_map(mapObj);
-
-    return 0;
-}
 
 /*
 Function Name: create_account

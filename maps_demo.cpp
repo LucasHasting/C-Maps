@@ -43,7 +43,7 @@ void print_map(map<T, U> mapObj){
 //driver function
 int main(){
 
-    //Under this line was done by Lucas------------------------------------------------------------s
+    //Under this line was done by Lucas------------------------------------------------------------
 
     map<string, int> mapObj;
 
