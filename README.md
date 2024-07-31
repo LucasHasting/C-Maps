@@ -1,5 +1,5 @@
 # C++ Maps Container
-Project was created in my CS 355 (Data Structures and Algorithms) class. It was to find an applicable use of the STL map container. The project makes use of the map container as a means of authentication, as it replicates an account managaer with the ability to create and account, login, and delete a logged in account. The encryption method for storing usernames and passwords was a slight modification to an ASCII cipher and should not be used in production as it is not secure. This project was done with the help of Ethan Nix and Krutivas Pradhan.  
+Project was created in my CS 355 (Data Structures and Algorithms) class. It was to find an applicable use of the STL map container. The project makes use of the map container as a means of authentication, as it replicates an account managaer with the ability to create and modify an account, login, and delete a logged in account. The encryption method for storing usernames and passwords was a slight modification to an ASCII cipher and should not be used in production as it is not secure. This project was done with the help of Ethan Nix and Krutivas Pradhan.  
 
 ## Table of Contents
 
