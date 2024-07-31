@@ -31,11 +31,9 @@ You need [C++](https://sourceforge.net/projects/mingw/) language installed on yo
 ### Option 2: without git
 1. Download the project as a zip file
 2. [Extract the zip file](https://www.wikihow.com/Unzip-a-File)
-3. In windows, the subnetting.py file can be clicked to execute
-
-1. Find the location of the files
-2. Copy the path
-3. go to the command line and run the following:
+3. Find the location of the files
+4. Copy the path
+5. go to the command line and run the following:
    ```sh
    cd /path/to/files
    ```
