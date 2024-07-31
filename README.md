@@ -1,6 +1,5 @@
 # C++ Maps Container
-Project was created in my Data Structures and Algorithms class.  
-Project was done with the help of Ethan Nix and Krutivas Pradhan.  
+Project was created in my CS 355 (Data Structures and Algorithms) class. It was to find an applicable use of the STL map container. The project makes use of the map container as a means of authentication. The encryption method used was a slight modification to an ASCII cipher and should not be used in production as it is not secure. This project was done with the help of Ethan Nix and Krutivas Pradhan.  
 
 ## Table of Contents
 
