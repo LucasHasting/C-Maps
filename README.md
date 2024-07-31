@@ -74,7 +74,6 @@ When selecting either of the first two options, the program will generate a pdf 
 
 ![EXAMPLE](examples/example1.png)  
 ![EXAMPLE](examples/example2.png)  
-![EXAMPLE](examples/example3.png)  
 
 ## Program-Overview
 [maps.cpp](): contains the account management simulation with the ASCII Cipher.  
