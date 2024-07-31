@@ -452,6 +452,20 @@ string decrypt(string password)
 }
 
 /*
+Function Name: print_seperator
+Function Description: Separates output
+Incoming: None
+Outgoing: None
+Return: None
+Function Contribution: Lucas Hasting
+*/
+void print_seperator(){
+    for (int i = 0; i < PRINT_AMOUNT; i++)
+        cout << "-";
+    cout << endl;
+}
+
+/*
 Function Name: write_map
 Function Description: writes the map into an encrypted text file
 Incoming: map
@@ -459,8 +473,7 @@ Outgoing: None
 Return: None
 Function Contribution: Krutivas Pradhan
 */
-template <class T, class U>
-void write_map(map<T, U> mapObj)
+void write_map(map<string, string> mapObj)
 {
     //declare variables
     ofstream outfile;
@@ -480,7 +493,7 @@ void write_map(map<T, U> mapObj)
     }
 
     //declare iterator for map
-    typename map<T, U>::iterator it = mapObj.begin();
+    typename map<string, string>::iterator it = mapObj.begin();
 
     //first loop case
     //set the username and password
@@ -532,8 +545,7 @@ Outgoing: None
 Return: None
 Function Contribution: Krutivas Pradhan
 */
-template <class T, class U>
-void load_map(map<T, U> &mapObj)
+void load_map(map<string, string> &mapObj)
 {
     //check if input file exists
     ifstream infile("encrypted.txt");
@@ -542,7 +554,7 @@ void load_map(map<T, U> &mapObj)
         return;
 
     //declare variables
-    typename map<T, U>::iterator it = mapObj.begin();
+    typename map<string, string>::iterator it = mapObj.begin();
     string username;
     string password;
     string key1;
@@ -565,10 +577,4 @@ void load_map(map<T, U> &mapObj)
         mapObj[decrypt(username, key1)] = decrypt(password, key2);
     }
     infile.close();
-}
-
-void print_seperator(){
-    for (int i = 0; i < PRINT_AMOUNT; i++)
-        cout << "-";
-    cout << endl;
 }

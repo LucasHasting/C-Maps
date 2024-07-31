@@ -7,6 +7,12 @@ Program Description: Create an account management system for some application
 File Name: maps.h
 */
 
+#ifndef MAPS_H
+#define MAPS_H
+
+#include <map>
+using namespace std;
+
 //function declarations
 void create_account(map<string, string> &mapObj);
 void remove_account(map<string, string> &mapObj, string current_user);
@@ -22,13 +28,10 @@ string encrypt(string password);
 string decrypt(string password, string key);
 string decrypt(string password);
 void print_seperator();
-
-//templated function declarations
-template <class T, class U>
-void write_map(map<T, U> mapObj);
-
-template <class T, class U>
-void load_map(map<T, U> &mapObj);
+void load_map(map<string, string> &mapObj);
+void write_map(map<string, string> mapObj);
 
 //constants
 const int PRINT_AMOUNT = 70;
+
+#endif
