@@ -12,7 +12,7 @@ Project was created in my CS 355 (Data Structures and Algorithms) class. It was 
 
 ## Installation
 
-You need [C++](https://sourceforge.net/projects/mingw/) language installed on your system, it can be executed using the g++ compiler.
+You need [C++](https://sourceforge.net/projects/mingw/) language installed on your system, the program can be executed using the g++ compiler.
 
 ### Option 1: using [git](https://git-scm.com/downloads)
 1. Clone the repository:
