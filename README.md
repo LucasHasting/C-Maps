@@ -12,7 +12,7 @@ Project was created in my CS 355 (Data Structures and Algorithms) class. It was 
 
 ## Installation
 
-You need [C++](https://sourceforge.net/projects/mingw/) language installed on your system, the program can be executed using the g++ compiler.
+You need the [C++](https://sourceforge.net/projects/mingw/) language installed on your system, the program can be executed using the g++ compiler.
 
 ### Option 1: using [git](https://git-scm.com/downloads)
 1. Clone the repository:
@@ -64,11 +64,7 @@ map.exe
 ```
 
 ## Usage
-The program is a command line, menu based, user interface. By entering the number associated with an option it will perform a certain operation. The first item displays the road (graph) with the miles included and the second item displays the road without the miles. The third option allows you to enter a path (starting point and destination), while the 4th and last option allows you to exit/quit the program.
-
-When selecting a path it will ask for a starting vertex which is the starting point, then it will ask for a destination vertix which is the destination. It will then bring back the main menu and choosing either of the first two options will show the path highlighted red.
-
-When selecting either of the first two options, the program will generate a pdf of the road (graph) and will try to open software that can view the pdf (such as google chrome).
+The program is a command line, menu based, user interface. By entering the number associated with an option it will perform a certain operation. The program has multiple menus, the first being the main menu where you can sign in, create an account, or exit the program. When creating an account it asks for the username and password, and the password is hidden using *. Upon successfull login you have the option to change the accounts username and password, along with deleteing the account, or you can choose to sign out.
 
 ## Example
 
