@@ -12,7 +12,11 @@ Project was created in my CS 355 (Data Structures and Algorithms) class. It was 
 
 ## Installation
 
-You need the [C++](https://sourceforge.net/projects/mingw/) language installed on your system, the program can be executed using the g++ compiler.
+The programs in this repository can be executed using the C++ language and the g++ compiler.
+
+g++ for [Windows](https://sourceforge.net/projects/mingw/), don't forget to add the binary to the [path environment variable](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
+
+g++ can be installed on Linux using your favorite package manager.
 
 ### Option 1: using [git](https://git-scm.com/downloads)
 1. Clone the repository:
